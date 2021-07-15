@@ -10,7 +10,7 @@ type commandPair = {
 }
 
 type point = {
-    axis: axis,
+    axis: "y" | "x" | boolean,
     coordinate: number,
 }
 
@@ -70,6 +70,14 @@ const getAxis = (command : commandName , index : number) => {
     if ( 'horizontal' === command ) {
         return 'x'
     }
+    if ('arc' === command) {
+        if (index === 2 || index === 3 || index === 4) {
+            return false
+        }
+        if (index > 4) {
+            return index % 2 === 0 ? 'y' : 'x';
+        }
+    }
     return index % 2 === 0 ? 'x' : 'y';
 }
 
@@ -77,7 +85,7 @@ const renderCommand = (command : commandObject) => `${commandMap[command.command
 
 const shiftPoint = (point : point, shiftValue : number) => ({...point, coordinate: Math.round(point.coordinate + shiftValue)})
 
-const shiftPoints = (points : point[], xShift: number, yShift: number) => points.map((point) => shiftPoint(point, point.axis === 'x' ? xShift : yShift ))
+const shiftPoints = (points : point[], xShift: number, yShift: number) => points.map((point) => shiftPoint(point, point.axis === false ? 0 : point.axis === 'x' ? xShift : yShift  ))
 
 
 const path = () => {
