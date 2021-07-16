@@ -36,7 +36,7 @@ type DrinkProcess = (drink : Drink) => Drink
 
 const getArea : DrinkProcess = (drink : Drink) => {
   const newDrink = {...drink}
-  newDrink.height = random(20, 100)
+  newDrink.height = random(20, 150)
   newDrink.width = random(50, 100)
   newDrink.skew = Math.random()
   return newDrink
@@ -115,7 +115,9 @@ const renderDrink = (drink : Drink, svg) => {
   svg.path(makeMaskPoints(drink)).fill(`${stroke}11`).stroke(strokeOptions)
   svg.path(makePoints(drink)).fill(fill).stroke({...strokeOptions, width: 0.5});
   svg.path(makeHighlight(drink)).fill(fill).stroke(strokeOptions)
-  svg.path(makeDetail(drink)).fill(fill).stroke(strokeOptions).maskWith(outerMask)
+  if (drink.height > 60 && maybe(40)) {
+    svg.path(makeDetail(drink)).fill(fill).stroke(strokeOptions).maskWith(outerMask)
+  }
   maybe(70) && svg.rect(random(2, 4), drink.height).move(drink.position.x + random(0, drink.width), drink.position.y).fill(`#ffffff99`).maskWith(innerMask)
   maybe(80) && svg.rect(random(1, 4), drink.height).move(drink.position.x + drink.width - random(0, drink.width/2), drink.position.y).fill(`#ffffffee`).maskWith(innerMask)
 }
@@ -145,9 +147,19 @@ const makeStemHighlight = drink => {
 
 const makeDetail = (drink) => {
   const detailPath = path();
-  detailPath.move([drink.position.x + 10, drink.position.y + 14], true)
-  detailPath.arc([5, 5, 0, 0, 1, 10, 0])
-  detailPath.arc([5, 5, 0, 1, 0, 10, 0])
+  const arcSizes = [5, 9, 10, 9, 5]
+  const baseArc = drink.width/(arcSizes.length + 3)
+  const total = arcSizes.reduce((s, c) => s + c, 0);
+  const proportion = arcSizes.map(v => v/total)
+  detailPath.move([drink.position.x, drink.position.y + baseArc + 25], true)
+  proportion.map((width) => {
+    detailPath.arc([(drink.width/2) * width/2, baseArc, 0, 0, 1, drink.width * width, 0])
+  })
+  proportion.reduce((last, width) => {
+    detailPath.move([drink.position.x + (drink.width * (width + last)), drink.position.y + baseArc + 25], true)
+    detailPath.vertical([10]);
+    return width + last
+  }, 0)
   return detailPath.render();
 }
 
