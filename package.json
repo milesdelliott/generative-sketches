@@ -11,7 +11,8 @@
     "typescript": "^4.3.4"
   },
   "scripts": {
-    "start": "parcel ./src/index.html"
+    "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html -d ./dist/"
   },
   "dependencies": {
     "@georgedoescode/generative-utils": "^1.0.6",
