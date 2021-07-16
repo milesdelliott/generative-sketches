@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "parcel ./src/index.html",
-    "build": "parcel build ./src/index.html -d ./dist/"
+    "build": "parcel build ./src/index.html -d ./public/"
   },
   "dependencies": {
     "@georgedoescode/generative-utils": "^1.0.6",
